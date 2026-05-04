@@ -1,0 +1,28 @@
+{
+  "_comment": "Merge these into your project's .claude/settings.json. The local-toolkit@local entry already exists from the template — only add the three marketplaces below.",
+  "enabledPlugins": {
+    "impeccable@impeccable": true,
+    "interface-design@interface-design": true,
+    "ui-ux-pro-max@ui-ux-pro-max-skill": true
+  },
+  "extraKnownMarketplaces": {
+    "impeccable": {
+      "source": {
+        "source": "github",
+        "repo": "pbakaus/impeccable"
+      }
+    },
+    "interface-design": {
+      "source": {
+        "source": "github",
+        "repo": "Dammyjay93/interface-design"
+      }
+    },
+    "ui-ux-pro-max-skill": {
+      "source": {
+        "source": "github",
+        "repo": "nextlevelbuilder/ui-ux-pro-max-skill"
+      }
+    }
+  }
+}

@@ -1,0 +1,6 @@
+{
+  "name": "local-toolkit",
+  "description": "Local plugin shell for project-bundled skills. Populate skills/ via bundles from Claude-workflow-framework.",
+  "version": "0.1.0",
+  "license": "UNLICENSED"
+}

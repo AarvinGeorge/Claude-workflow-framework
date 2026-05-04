@@ -1,0 +1,89 @@
+# CLAUDE.md — <project-name>
+
+## Your Role
+<role — e.g. "You are a senior software engineer focused on …">
+
+Treat this as your primary lens for every task. Re-read this section if
+the user updates it.
+
+## Project: <project-name>
+<project-summary — one or two sentences describing what this is.>
+
+**Deliverables in scope**
+- <bullet 1>
+- <bullet 2>
+- <bullet 3>
+
+**Out of scope right now:** <list explicitly. Saying "no" up front prevents
+scope creep. Design with these as future seams; don't implement.>
+
+## End Users
+<who is this for? List segments. Two paragraphs max.>
+
+Example use cases:
+- <use case 1>
+- <use case 2>
+
+## Constraints (non-negotiable)
+<List the non-negotiables. Replace these stubs with what's real for this
+project. Keep the list short — only things that genuinely shape every
+decision.>
+
+- **<Constraint 1, e.g. WCAG 2.2 AA>** — <how it applies>
+- **<Constraint 2, e.g. Data privacy / HIPAA>** — <how it applies>
+- **<Constraint 3, e.g. Performance budget>** — <how it applies>
+- **<Out-of-scope flag, e.g. No real AI integration yet>** — <why>
+
+## Tech Stack
+- **<Layer 1, e.g. Framework>:** <choice>
+- **<Layer 2, e.g. Styling>:** <choice>
+- **<Layer 3, e.g. Component base>:** <choice>
+- **<Layer 4, e.g. Build / dist>:** <choice>
+- **<Layer 5, e.g. State / data>:** <choice>
+
+## Methodology
+This project follows the [6 D's
+methodology](https://github.com/AarvinGeorge/Claude-workflow-framework/blob/main/METHODOLOGY.md):
+Discover → Define → Design → Develop → Deliver → Evolve.
+
+Skill choices per phase live in
+[CAPABILITY_MAP.md](https://github.com/AarvinGeorge/Claude-workflow-framework/blob/main/CAPABILITY_MAP.md).
+
+**Current phase:** <Discover | Define | Design | Develop | Deliver | Evolve>
+
+## Tooling & Skills
+**Always-on (user scope):** superpowers, context7, claude-api,
+skill-creator, pdf/docx/xlsx/pptx, harness ops.
+
+**Project-scope bundles installed:**
+- <bundle name>: <one-line purpose>
+
+**External tools / MCPs in use:**
+- <e.g. Figma MCP — pulling design variables>
+- <e.g. Playwright MCP — browser testing>
+
+See [EVOLUTION.md](https://github.com/AarvinGeorge/Claude-workflow-framework/blob/main/EVOLUTION.md)
+for how to add new skills as needs arise.
+
+## How You Work
+1. Identify which phase of the 6 D's the current task lives in.
+2. Pull project context: `CLAUDE.md`, any `system.md` / `tokens.json` /
+   `research/` artifacts that exist.
+3. Use the right skill for the phase (see CAPABILITY_MAP).
+4. Confirm done-when criteria before transitioning phases.
+5. Verify before declaring done (`superpowers:verification-before-completion`).
+6. Update artifacts (changelog, system.md, memory) as patterns
+   stabilize.
+
+**Confirm before creating canonical artifacts.** For new schemas,
+contracts, design system entries, or research synthesis docs, present
+the structure for approval before writing files.
+
+## Repo State
+<Update this section as the project evolves. Examples:>
+
+- Working dir: <absolute path>
+- Git: <initialized | not yet | branch info>
+- Scaffolding: <done | in progress | not started>
+- Active branches: <main only | feature branches in flight>
+- Outstanding deliverables: <bullet list>

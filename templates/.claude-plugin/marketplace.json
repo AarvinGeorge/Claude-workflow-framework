@@ -1,0 +1,14 @@
+{
+  "name": "local",
+  "metadata": {
+    "description": "Local marketplace for project-bundled skills."
+  },
+  "plugins": [
+    {
+      "name": "local-toolkit",
+      "description": "Project-specific bundled skills.",
+      "version": "0.1.0",
+      "source": "./"
+    }
+  ]
+}
