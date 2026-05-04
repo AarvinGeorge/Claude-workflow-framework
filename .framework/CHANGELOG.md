@@ -1,5 +1,55 @@
 # Changelog
 
+## v0.4.0 — 2026-05-04
+
+**Setup verification: framework now checks the user's environment and
+helps install missing pieces.**
+
+User feedback: "does this framework package the right skills out of the
+box? if the skills or plugins are not present does it check the system,
+confirm, and recommend setup with the help of Claude Code?" The honest
+answer for v0.3 was *no*. The framework expected L1 plugins
+(`superpowers`, `context7-plugin`) at user scope but didn't verify or
+help install them. v0.4 closes this gap.
+
+**Changes:**
+- **Added `.framework/scripts/check-setup.sh`** — verifies tools (`claude`,
+  `gh`, `jq`), L1 plugins at user scope (parses `claude plugin list
+  --json` with jq), and project scaffold (`CLAUDE.md`, `.claude/`,
+  `.framework/`). Exits 0 if all good, 1 with install commands if any
+  missing.
+- **Added "Session Start Verification" to CLAUDE.md.** Tells Claude to
+  run `check-setup.sh` on the first session of a fresh project. If
+  anything's missing, Claude reports what's missing, explains what each
+  piece does, and offers to install via Bash with user approval.
+  Skipped on subsequent sessions.
+- **Rewrote root README** as a proper framework README. Explains
+  philosophy (3 principles), what's in the box vs. expected, what
+  Claude actually does at each stage, honest limits, and how the
+  framework evolves. Each claim is now backed by a concrete file or
+  script.
+- **Rewrote `.framework/README.md`** as a slim docs index — quick links
+  to METHODOLOGY, CAPABILITY_MAP, EVOLUTION, scripts, and bundles.
+
+**Verifiable now (audited against the README):**
+- "2 commands and Claude is ready" → true; first command clones, second
+  starts Claude which verifies setup
+- "Framework checks setup on first session" → true; `check-setup.sh`
+  exists and CLAUDE.md instructs Claude to run it
+- "Claude offers to install missing pieces" → true; CLAUDE.md
+  guidance tells Claude how
+- "Right skills out of the box" → true with caveat: L2 (bundles) ship
+  here, L1 (universal) is verified-and-installed-on-demand
+
+**Known limitations:**
+- `check-setup.sh` is bash-only (Windows users need WSL).
+- Plugin install via Claude Code still requires manual restart for
+  plugins to register; that's a Claude Code limitation, not framework.
+- L1 plugin list is currently fixed (`superpowers`, `context7-plugin`).
+  Future versions may expand or make it configurable.
+
+---
+
 ## v0.3.0 — 2026-05-04
 
 **Continuous guidance: the framework now guides Claude every turn,

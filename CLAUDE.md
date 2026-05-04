@@ -19,6 +19,31 @@ place** — don't keep them empty once Discover yields answers.
 
 ---
 
+## Session Start Verification (run on first session of a new project)
+
+Before greeting the user or starting Discover, verify the framework's
+prerequisites are in place. Run this once via the Bash tool:
+
+```bash
+./.framework/scripts/check-setup.sh
+```
+
+The script reports tools (`claude`, `gh`, `jq`), always-on plugins
+(`superpowers`, `context7-plugin`), and project scaffold state.
+
+- **If everything is OK** → continue to greeting and Phase 1 kickoff.
+- **If anything is missing** → tell the user what's missing, why each
+  piece matters, and offer to install with their approval. Run the
+  install commands the script suggests via Bash. After installs, ask
+  the user to restart Claude Code (`/exit`, then `claude`) so plugins
+  register, then resume Phase 1 in the next session.
+
+**Skip this check** on subsequent sessions (any session where Phase 1
+already has output — i.e. Project / End Users sections are no longer
+empty). The verification is one-time per project.
+
+---
+
 ## Per-Turn Ritual
 
 Run through these three questions before each response. Non-negotiable —
