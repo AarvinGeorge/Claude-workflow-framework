@@ -1,5 +1,60 @@
 # Changelog
 
+## v0.3.0 — 2026-05-04
+
+**Continuous guidance: the framework now guides Claude every turn,
+not just at kickoff.**
+
+User feedback: even with v0.2's zero-prep bootstrap, the framework
+only really kicked in at the start. Bundle install was still a manual
+step the user had to know to run, and skill invocation was reactive
+(based on each skill's own description) rather than methodology-driven.
+The framework promised "guide me throughout" but only delivered "set
+me up."
+
+**Changes:**
+- **Dropped the `.template` suffix on CLAUDE.md.** Clone gives you a
+  working CLAUDE.md immediately. New-project flow is now 2 commands
+  (was 3).
+- **Added Per-Turn Ritual to CLAUDE.md.** Claude runs a 3-question
+  check before every response: (1) what phase are we in, (2) does a
+  skill match this task, (3) does this complete a phase or change
+  state. Non-negotiable — turns CLAUDE.md from a static charter into
+  a live runbook.
+- **Added Bundle Selection guidance to CLAUDE.md.** Claude proactively
+  recommends bundles after Discover yields project type, frames as
+  *capabilities* (not architecture), and runs the install script
+  itself on user approval. The user never has to know which bundle to
+  install up front.
+- **Added Done-When checklist for current phase.** CLAUDE.md tracks
+  phase-completion criteria visibly. When Phase 1 is done, the
+  checklist gets replaced with Phase 2's criteria (and `Current Phase`
+  updates) in the same response.
+- **Updated METHODOLOGY.md Phase 1 outputs** to include bundle
+  recommendation as an explicit Discover deliverable.
+- **Updated all docs** to reflect 2-command flow.
+
+**New-project flow** (was 3+ commands plus knowledge of bundles, now
+just 2):
+```bash
+gh repo create … --template AarvinGeorge/Claude-workflow-framework --private --clone
+cd <project>
+claude
+```
+
+After `claude` opens, everything is conversation. Claude greets, asks
+the discovery question, walks Phase 1, recommends a bundle when
+appropriate, installs on approval, transitions phases on completion.
+
+**Known limitations:**
+- Per-Turn Ritual depends on Claude honoring it. Long contexts may see
+  drift; a fresh session re-reads CLAUDE.md and re-anchors.
+- Phase transitions still rely on Claude noticing them. The Done-When
+  checklist makes this visible but not automatic.
+- Restart for plugins is still a Claude Code limitation, not framework.
+
+---
+
 ## v0.2.0 — 2026-05-04
 
 **Philosophy shift: discovery happens with Claude, not before it.**

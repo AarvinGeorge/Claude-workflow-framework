@@ -32,10 +32,15 @@ they need, and whether the problem is worth solving.
 - Stakeholder map
 - Competitor / reference notes
 - Feasibility assessment
+- **Bundle recommendation** — which framework bundle (if any) fits the
+  project. Claude should propose this proactively based on project type;
+  see CLAUDE.md's *Bundle Selection* section for the recommendation
+  workflow.
 
 **Done when.** You can state in one sentence: *who* the user is, *what*
 they're trying to do, *why* current options fail them, and *whether*
-this is technically buildable.
+this is technically buildable. AND: a bundle has been recommended (and
+installed if applicable) or it's been confirmed that no bundle fits.
 
 ---
 

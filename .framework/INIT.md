@@ -1,14 +1,14 @@
 # INIT — Starting a New Project
 
-Step-by-step to get a new project running with this framework. Aim:
-under 5 minutes from clean slate to "ready for Phase 1 (Discover)".
+Two commands from clone to "Claude is asking the first discovery
+question." Everything else happens in conversation.
 
 ---
 
 ## Prerequisites (one-time, on your machine)
 
-You only do this once per machine. After this, every new project skips
-straight to the per-project flow below.
+You only do this once. After this, every new project skips straight to
+the per-project flow below.
 
 ### 1. Always-on baseline plugins (L1, user scope)
 
@@ -26,103 +26,94 @@ claude plugin install context7-plugin --scope user
 claude plugin list --scope user
 ```
 
-### 2. GitHub CLI
+### 2. GitHub CLI + jq
 
 ```bash
-gh auth status   # confirm logged in
+gh auth status        # confirm logged in
+brew install jq       # used by the bundle install script
 ```
 
 ---
 
-## Per-project flow
+## Per-project flow (2 commands)
 
-### Step 1 — Create the project repo from this template
+### 1. Clone from the template
 
 ```bash
 gh repo create AarvinGeorge/<project-name> \
     --template AarvinGeorge/Claude-workflow-framework \
-    --public --clone
+    --private --clone
 
 cd <project-name>
 ```
 
-The cloned repo contains the full framework. **Move just the
-`templates/` contents to the project root**, then delete the framework
-docs/bundles you don't need:
+The cloned repo already has the project scaffold at root:
+- `CLAUDE.md` — kickoff doc; tells Claude the project is fresh and to
+  facilitate Phase 1 with you
+- `.claude/settings.json` — baseline plugin config
+- `.claude-plugin/` — empty local plugin shell, ready for bundles
+- `.gitignore` — standard
+- `README.md` — project README starter
+- `.framework/` — methodology, capability map, bundles, scripts
+
+No restructure step. No file rename. No placeholder-filling.
+
+### 2. Open Claude Code
 
 ```bash
-# Move template contents to root
-mv templates/.claude templates/.claude-plugin templates/.gitignore templates/CLAUDE.md.template ./
-mv CLAUDE.md.template CLAUDE.md
-
-# Optional — keep BUNDLE_GUIDE for reference, drop framework docs
-# (you can always git-clone the framework repo separately for reference)
+claude
 ```
 
-> Alternative: keep the whole framework structure inside your project
-> as a self-contained reference. Slightly more cluttered but lets you
-> evolve docs in-place. Your call.
+Claude reads `CLAUDE.md`, sees "Phase: Discover (not started)," and:
 
-### Step 2 — Install a bundle (if one fits)
+1. Greets you briefly
+2. Asks: *"What are we building, and what do you already know about it?"*
+3. Invokes `superpowers:brainstorming` once you describe the project
+4. Walks Phase 1 (Discover): problem framing, stakeholder map,
+   feasibility check
+5. **Proactively recommends a bundle** based on project type ("sounds
+   like there's significant UI work — I can install some
+   design-engineering capabilities, OK?")
+6. On approval, runs the install script itself via Bash, then asks you
+   to restart Claude Code so plugins register
+7. Continues guiding you through Define → Design → Develop → Deliver →
+   Evolve, invoking the right skill for each phase
 
-Check [`bundles/BUNDLE_GUIDE.md`](bundles/BUNDLE_GUIDE.md) to see what's
-available. If a bundle matches the project's domain:
+**Sections of CLAUDE.md fill in *during* the conversation**, not before.
+Roles, constraints, tech stack — all emerge from discovery.
 
-```bash
-# Example: install design-frontend bundle
-cp -r bundles/design-frontend/skills/* .claude-plugin/skills/
+---
 
-# Append the bundle's settings additions to your .claude/settings.json
-# (see bundle README for exact instructions)
-
-# Append the bundle's CLAUDE.md snippet to your CLAUDE.md
-# (see bundle README for exact instructions)
-```
-
-If no bundle fits → skip this step. Use general L1 skills only.
-
-### Step 3 — Fill in CLAUDE.md placeholders
-
-Open `CLAUDE.md` and replace every `<placeholder>` with real content:
-
-- `<project-name>` — the project's actual name
-- `<project-summary>` — one-sentence description
-- `<role>` — what role you want Claude to take (default given is
-  software engineer; swap if you're doing design / research / data)
-- `<end-users>` — who this is for
-- `<constraints>` — non-negotiables (compliance, performance, a11y,
-  privacy)
-- `<tech-stack>` — what you're building with
-- `<repo-state>` — where things stand at session start
-
-Save it.
-
-### Step 4 — Verify
+## Verify (after first restart)
 
 ```bash
-# In a Claude Code session inside the project:
+# Inside the new Claude session:
 claude plugin list
-
-# Confirm:
-# - User-scope plugins are enabled (superpowers, context7, etc.)
-# - Project-scope local plugin (local-toolkit) is enabled
-# - Any bundle marketplaces you added are enabled
 ```
 
-If something's missing, see the troubleshooting list at the bottom.
+Confirm:
+- User-scope plugins are enabled (superpowers, context7, etc.)
+- Project-scope `local-toolkit@local` is enabled
+- If a bundle was installed, its marketplaces should be enabled too
+  (e.g. `impeccable@impeccable`, `interface-design@interface-design`)
 
-### Step 5 — Start Phase 1 (Discover)
+If something's missing, see the troubleshooting list below.
 
-Open a Claude Code session in the project root. The session reads
-`CLAUDE.md`, picks up the right skills, and is ready to brainstorm
-discovery artifacts.
+---
 
-A good first prompt:
-> *"Per CLAUDE.md, we're at the Discover phase of a fresh project.
-> Help me draft the problem statement and stakeholder map."*
+## What the Per-Turn Ritual buys you
 
-`superpowers:brainstorming` should auto-invoke. From there, follow
-the [methodology](METHODOLOGY.md).
+CLAUDE.md instructs Claude to run a 3-question check **before every
+response**:
+
+1. What phase are we in?
+2. Does a skill match this task? Invoke it.
+3. Does this complete a phase or change project state? Update CLAUDE.md
+   in the same response.
+
+This is what makes the framework guide you *throughout* the project,
+not just at kickoff. As long as Claude honors the ritual, phase
+transitions, skill activation, and state-keeping happen by themselves.
 
 ---
 
@@ -131,9 +122,12 @@ the [methodology](METHODOLOGY.md).
 | Symptom | Likely cause | Fix |
 |---|---|---|
 | `claude plugin list` shows no plugins | Marketplaces not added | Re-run plugin install commands at the right scope |
-| Bundle skills don't auto-trigger | Local plugin not enabled at project scope | Check `.claude/settings.json` has `local-toolkit@local: true` |
+| Bundle skills don't auto-trigger | Local plugin not enabled, or restart not done | Check `.claude/settings.json`; `/exit` then `claude` |
 | Skills duplicated in listing | Plugin enabled at both user and project scope | Decide which scope is canonical; disable the other |
 | `CLAUDE.md` not picked up | Wrong filename or location | Must be at project root, named exactly `CLAUDE.md` |
+| Bundle install script fails on jq | jq not installed | `brew install jq` |
+| Script run from wrong dir | Run from project root, not from `.framework/` | `cd` to project root first |
+| Claude doesn't recommend a bundle | Discover not yet yielded enough context | Continue Discover; the recommendation comes once project type is clear |
 
 ---
 
@@ -141,10 +135,10 @@ the [methodology](METHODOLOGY.md).
 
 As you work, the framework gets better:
 
-- Notice friction → file a brief note in your project's notes, then
-  later open a PR against the framework repo.
-- Discover a useful skill → run it through [EVOLUTION.md](EVOLUTION.md)
-  and add to the map.
+- Notice friction → file a brief note, then later open a PR against the
+  framework repo.
+- Discover a useful skill → run it through
+  [EVOLUTION.md](EVOLUTION.md) and add to the map.
 - Establish a pattern that recurs → consider authoring a skill via
   `skill-creator`.
 

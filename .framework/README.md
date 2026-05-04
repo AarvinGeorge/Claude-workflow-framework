@@ -24,7 +24,7 @@ with the project scaffold at root, with framework material tucked in
 | [`scripts/install-bundle.sh`](scripts/install-bundle.sh) | One-command bundle install |
 
 The repo root (one level up from this directory) holds the **project
-scaffold** that lands at the root of every new project: `CLAUDE.md.template`,
+scaffold** that lands at the root of every new project: `CLAUDE.md`,
 `.claude/`, `.claude-plugin/`, `.gitignore`, top-level `README.md`.
 
 ---
@@ -50,44 +50,47 @@ get after `Use this template`.
 
 ## Quick start (for a new project)
 
-See [INIT.md](INIT.md) for the full checklist. The TL;DR — 4 commands:
+See [INIT.md](INIT.md) for the full checklist. The TL;DR — **2 commands**:
 
 ```bash
-# 1. Clone from template
 gh repo create AarvinGeorge/<my-new-project> \
     --template AarvinGeorge/Claude-workflow-framework \
     --private --clone
-
 cd <my-new-project>
 
-# 2. Rename the project charter
-mv CLAUDE.md.template CLAUDE.md
-
-# 3. (Optional) Install a bundle
-./.framework/scripts/install-bundle.sh design-frontend
-
-# 4. Open Claude Code — it reads CLAUDE.md, kicks off Phase 1 with you
 claude
 ```
 
-No placeholder-filling required. Discovery happens in conversation, not
-via a one-shot form.
+That's it. Claude reads `CLAUDE.md`, kicks off Phase 1 (Discover) with
+you, and recommends + installs a bundle on its own once it understands
+the project type. No placeholder-filling, no rename, no manual install.
 
 ---
 
 ## Philosophy
 
 **The framework's job is to make Claude Code immediately useful, not to
-extract project facts up front.** Discovery is the first thing Claude
-does *with* you, not a prerequisite. The CLAUDE.md template is a
-*kickoff doc*, not a form — sections fill in during the
-Discover/Define/Design conversations.
+extract project facts up front.** Three principles:
+
+1. **Discovery happens with Claude, not before it.** CLAUDE.md is a
+   kickoff doc, not a form. Sections fill in during conversation as
+   facts solidify.
+2. **Claude makes informed tooling decisions.** Bundle selection is an
+   *output* of Discover, not a prerequisite. Claude proposes; user
+   approves; Claude installs.
+3. **The framework guides Claude every turn.** A Per-Turn Ritual in
+   CLAUDE.md (3 questions Claude runs each response) keeps phase
+   awareness, skill invocation, and state-keeping continuous —
+   not just at kickoff.
 
 ---
 
 ## Status
 
-**v0.2** — restructured for true zero-prep new-project bootstrap.
-Template lives at repo root; framework material in `.framework/`;
-bundle install is one command. Friction discovered while using the
-framework on real projects feeds back as future versions.
+**v0.3** — continuous guidance baked in. CLAUDE.md now has a Per-Turn
+Ritual that Claude runs before every response, ensuring the framework
+guides skill invocation and phase tracking *throughout* the project,
+not just at kickoff. New-project flow is 2 commands.
+
+Friction discovered while using the framework on real projects feeds
+back as future versions.
