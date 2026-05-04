@@ -29,19 +29,29 @@ These will be created as projects need them. Don't pre-build.
 
 ## How to install a bundle
 
-Each bundle has its own README with the exact steps. The general shape:
+From the project root, run the install script with the bundle name:
 
-1. **Copy skills** — `cp -r bundles/<name>/skills/* <project>/.claude-plugin/skills/`
-2. **Add settings** — paste the bundle's `settings-additions.json`
-   contents into your project's `.claude/settings.json` (merge by hand
-   or with a JSON merge tool).
-3. **Add CLAUDE.md sections** — paste the bundle's `claude-md-snippet.md`
-   into the relevant sections of your project's `CLAUDE.md`.
-4. **(Optional) Use seed files** — bundles may include starter
-   `tokens.json`, `system.md`, etc. — copy if you want a head start, or
-   build from scratch.
+```bash
+./.framework/scripts/install-bundle.sh <bundle-name>
+```
 
-Then verify with `claude plugin list`.
+The script:
+1. **Copies skills** — `bundles/<name>/skills/*` → `.claude-plugin/skills/`
+2. **Merges settings** — `settings-additions.json` is jq-merged into
+   `.claude/settings.json` (the `_comment` field is stripped).
+3. **Appends CLAUDE.md additions** — `claude-md-snippet.md` is appended
+   with `<!-- begin/end: <bundle> bundle additions -->` delimiters. You
+   can move sections around if you want different placement.
+4. **(Optional) Seed files** — if a bundle ships `tokens.json.seed` etc.,
+   copy them in by hand. The script doesn't move seeds (to avoid
+   overwriting project files).
+
+Requires: `jq` installed (`brew install jq`). Without jq, the settings
+merge is skipped and you'll need to merge by hand from the bundle's
+`settings-additions.json`.
+
+After running, restart Claude Code (`/exit`, then `claude`) and verify
+with `claude plugin list`.
 
 ---
 
@@ -62,7 +72,7 @@ signal to extract a bundle.
 
 2. Add a row to this guide.
 
-3. Bump the framework version in [CHANGELOG.md](../CHANGELOG.md).
+3. Bump the framework version in [`CHANGELOG.md`](../CHANGELOG.md).
 
 4. Test by installing in a fresh project. Friction = bundle bug.
 

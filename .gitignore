@@ -1,6 +1,39 @@
-# OS
-.DS_Store
-Thumbs.db
+# Dependencies
+node_modules/
+.pnp
+.pnp.*
+.yarn/*
+!.yarn/patches
+!.yarn/plugins
+!.yarn/releases
+!.yarn/versions
+
+# Build outputs
+.next/
+out/
+build/
+dist/
+
+# TypeScript
+*.tsbuildinfo
+next-env.d.ts
+
+# Env
+.env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+
+# Logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+.pnpm-debug.log*
+
+# Testing
+/coverage
 
 # IDE
 .vscode/*
@@ -11,3 +44,19 @@ Thumbs.db
 .idea/
 *.swp
 *.swo
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Claude Code (keep skills tracked, ignore local-only settings)
+.claude/settings.local.json
+.claude/.local/
+
+# Storybook
+storybook-static/
+
+# Misc
+*.pem
+.vercel
+.scratch/

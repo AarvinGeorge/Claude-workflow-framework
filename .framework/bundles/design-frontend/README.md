@@ -58,65 +58,38 @@ in your project's `.claude/settings.json`):
 
 ## Install
 
-From your project root, **after** you've created it from the framework
-template:
-
-### Step 1 — Copy bundled skills
+From your project root (after creating from the framework template and
+renaming `CLAUDE.md.template` to `CLAUDE.md`):
 
 ```bash
-# Adjust path to wherever you've cloned the framework
-FRAMEWORK=~/path/to/Claude-workflow-framework
-
-cp -r $FRAMEWORK/bundles/design-frontend/skills/* .claude-plugin/skills/
+./.framework/scripts/install-bundle.sh design-frontend
 ```
 
-Verify:
-```bash
-ls .claude-plugin/skills/
-# Should show: emil-design-eng/  shadcn/
-```
+The script:
+- copies `shadcn/` and `emil-design-eng/` into `.claude-plugin/skills/`
+- merges plugin entries (`impeccable`, `interface-design`,
+  `ui-ux-pro-max`) into `.claude/settings.json`
+- appends this bundle's CLAUDE.md additions (Design System tier table,
+  token-canonical sync, phased adoption, How You Work additions)
 
-### Step 2 — Merge settings additions
+**Requires `jq`.** If you don't have it: `brew install jq`.
 
-Open [`settings-additions.json`](settings-additions.json) and merge its
-contents into your `.claude/settings.json`. By hand or with `jq`:
-
-```bash
-# By hand (recommended for v0.1 — easy to verify what's added):
-# Open both files, paste plugins/marketplaces from the additions file
-# into the corresponding objects in your settings.json.
-```
-
-After merging, `.claude/settings.json` should enable:
-- `local-toolkit@local` (already there from the template)
-- `impeccable@impeccable`
-- `interface-design@interface-design`
-- `ui-ux-pro-max@ui-ux-pro-max-skill`
-
-### Step 3 — Add CLAUDE.md sections
-
-Open [`claude-md-snippet.md`](claude-md-snippet.md) and paste the
-relevant sections into your project's `CLAUDE.md`. Replace any
-placeholders with project-specific values.
-
-### Step 4 — Verify
-
-In a Claude Code session inside the project:
+After running, restart Claude Code (`/exit`, then `claude`) so the
+new plugins register. Verify:
 
 ```bash
 claude plugin list
 ```
 
-Confirm all four plugins (`local-toolkit`, `impeccable`,
-`interface-design`, `ui-ux-pro-max`) are enabled at project scope. If
-not, you may need to restart Claude Code (`/exit`, then `claude`).
+Should show `local-toolkit`, `impeccable`, `interface-design`, and
+`ui-ux-pro-max` all enabled at project scope.
 
-### Step 5 — Read the cheatsheet
+### Read the cheatsheet
 
-Read [`skills-cheatsheet.md`](skills-cheatsheet.md) once before starting
-real design work. It's the decision tree for which skill to use when,
-and lists pre-flight requirements (e.g. `impeccable` needs
-`PRODUCT.md` to exist before it'll do real work).
+Before starting real design work, read
+[`skills-cheatsheet.md`](skills-cheatsheet.md). It's the decision tree
+for which skill to use when, and lists pre-flight requirements (e.g.
+`impeccable` needs `PRODUCT.md` to exist before it'll do real work).
 
 ---
 
