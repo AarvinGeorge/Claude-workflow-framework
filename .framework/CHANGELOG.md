@@ -1,5 +1,43 @@
 # Changelog
 
+## v0.5.0 — 2026-05-04
+
+**Workflow visualization shipped as a permanent doc.**
+
+User feedback: "can you help me visualize what this workflow will look
+like going forward generally for any project?" The v0.4 README was
+honest about *what* the framework does but didn't give a clear picture
+of *how a project unfolds*. v0.5 adds that picture as a maintained doc.
+
+**Changes:**
+- **Added [`.framework/WORKFLOW.md`](WORKFLOW.md)** — four views of
+  what working with the framework looks like in practice:
+  1. The whole-project lifecycle (horizontal flow diagram of the 6 D's
+     with key activities and timing)
+  2. What a first session actually feels like (annotated dialogue from
+     `claude` open through end of Discover)
+  3. Who-does-what swim lanes per phase (table mapping YOU vs CLAUDE
+     vs CLAUDE.md state vs skills active)
+  4. How CLAUDE.md fills in over time (showing the doc as a living
+     charter that grows phase by phase)
+  Also includes a candid "caveats" section noting that real projects
+  loop backwards, and the framework supports that.
+- **Added "How a project unfolds" section to root README** — compact
+  ASCII lifecycle diagram + pointer to the full WORKFLOW.md.
+- **Added WORKFLOW.md to the in-the-box table and layout tree** in
+  the root README.
+- **Added WORKFLOW.md to `.framework/README.md` docs index** with a
+  "when to read what" entry.
+- **Added "Keeping the docs in sync" section to EVOLUTION.md** —
+  framework changes that alter user-visible workflow should update
+  both CHANGELOG.md (what changed) and WORKFLOW.md (what it feels
+  like). Internal-only changes update CHANGELOG only.
+
+**Maintenance commitment:** WORKFLOW.md is a first-class doc, updated
+alongside framework changes that affect the user experience.
+
+---
+
 ## v0.4.0 — 2026-05-04
 
 **Setup verification: framework now checks the user's environment and

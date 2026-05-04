@@ -15,6 +15,7 @@ For the framework's full explanation, see the
 |---|---|
 | [`METHODOLOGY.md`](METHODOLOGY.md) | The 6 D's methodology — phases, activities, outputs, done-when criteria |
 | [`CAPABILITY_MAP.md`](CAPABILITY_MAP.md) | Skill-to-phase mapping. Living doc; update when toolkit changes |
+| [`WORKFLOW.md`](WORKFLOW.md) | Visual workflow — lifecycle diagram, dialogue snapshot, swim lanes, CLAUDE.md evolution. Update when user-visible workflow changes |
 | [`EVOLUTION.md`](EVOLUTION.md) | 4-question loop for adding new skills/plugins/MCPs |
 | [`INIT.md`](INIT.md) | Starter checklist for new projects (most of this is automated; INIT.md is the backup reference) |
 | [`CHANGELOG.md`](CHANGELOG.md) | Framework version history |
@@ -28,6 +29,9 @@ For the framework's full explanation, see the
 ## When to read what
 
 - **Starting a new project** → root README + [`INIT.md`](INIT.md)
+- **Want to picture how a project unfolds end-to-end** →
+  [`WORKFLOW.md`](WORKFLOW.md) (lifecycle diagram, dialogue snapshot,
+  swim lanes)
 - **Mid-project, unsure what to do next** → [`METHODOLOGY.md`](METHODOLOGY.md)
   for phase guidance + [`CAPABILITY_MAP.md`](CAPABILITY_MAP.md) for
   skill choices

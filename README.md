@@ -71,6 +71,7 @@ Concrete deliverables, all verifiable:
 |---|---|---|
 | 6 D's methodology | [`.framework/METHODOLOGY.md`](.framework/METHODOLOGY.md) | Discover → Define → Design → Develop → Deliver → Evolve, with done-when criteria for each |
 | Capability map | [`.framework/CAPABILITY_MAP.md`](.framework/CAPABILITY_MAP.md) | Skill-to-phase mapping, including AI engineering twists |
+| Workflow visualization | [`.framework/WORKFLOW.md`](.framework/WORKFLOW.md) | Lifecycle diagram, dialogue snapshot, swim lanes, CLAUDE.md evolution |
 | Evolution loop | [`.framework/EVOLUTION.md`](.framework/EVOLUTION.md) | 4-question process for adding new skills/plugins/MCPs to your toolkit |
 | Project kickoff doc | [`CLAUDE.md`](CLAUDE.md) | Tells Claude how to start, run the per-turn ritual, recommend bundles, track phase |
 | Project scaffold | `.claude/`, `.claude-plugin/`, `.gitignore` | Ready-to-use Claude Code config |
@@ -103,6 +104,40 @@ marketplaces; Claude Code resolves them on restart):
 If these are missing, `check-setup.sh` reports them on first session
 and Claude offers to install them via `claude plugin install … --scope user`.
 You don't have to know they exist; the framework tells you.
+
+---
+
+## How a project unfolds
+
+```
+                                                                                    feedback
+                                                                                    ◄──────────────┐
+                                                                                                   │
+   KICKOFF  ──►  DISCOVER  ──►  DEFINE  ──►  DESIGN  ──►  DEVELOP  ──►  DELIVER  ──►  EVOLVE       │
+   ────────     ──────────     ────────     ────────     ──────────     ──────────     ────────    │
+                                                                                                   │
+   2 cmds       problem        personas     architecture  TDD            verify         refactor   │
+                stakeholders   JTBD         UX            integrate      audit          codify     │
+                feasibility    constraints  prompts       parallel       review         skills     │
+                bundle pick    evals        tokens        agents         ship           memory     │
+                                                                         observe                   │
+                                                                                                   │
+   ⏱ 0–2 min    ~1 session    ~1 session   ~2–3          loops          1–2            ongoing    │
+                                                                                                   │
+                                                framework version improvements ────────────────────┘
+                                                via .framework/EVOLUTION.md
+```
+
+The 6 D's loop, gated by done-when criteria at each phase boundary.
+Claude updates the project charter in conversation as facts solidify;
+phase transitions happen explicitly, not by drift. Real projects loop
+backwards too (Develop → Design when an architecture flaw surfaces),
+and the framework supports that — phase tracking makes the loop
+*visible* rather than hidden.
+
+For the full visualization (dialogue snapshot of a real first session,
+who-does-what swim lanes per phase, and how CLAUDE.md grows over time),
+see [`.framework/WORKFLOW.md`](.framework/WORKFLOW.md).
 
 ---
 
@@ -193,7 +228,8 @@ Versions visible:
 - **v0.1** — initial extraction
 - **v0.2** — restructure for zero-prep bootstrap
 - **v0.3** — Per-Turn Ritual + Bundle Selection (continuous guidance)
-- **v0.4** — setup verification (this version)
+- **v0.4** — setup verification (`check-setup.sh`)
+- **v0.5** — workflow visualization in `WORKFLOW.md` (this version)
 
 ---
 
@@ -213,6 +249,7 @@ Claude-workflow-framework/         ← repo root = project root after cloning
     ├── README.md                  ← docs index
     ├── METHODOLOGY.md             ← the 6 D's, fully described
     ├── CAPABILITY_MAP.md          ← skill ↔ phase mapping
+    ├── WORKFLOW.md                ← visual workflow (lifecycle, dialogue, swim lanes)
     ├── EVOLUTION.md               ← 4-question loop for new skills
     ├── INIT.md                    ← starter checklist
     ├── CHANGELOG.md               ← framework version history

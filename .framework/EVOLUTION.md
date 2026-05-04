@@ -116,3 +116,21 @@ Patterns sometimes generalize:
 
 Conversely, demote if you find a tool was less universal than you
 thought. Don't be precious; the map should reflect *current* reality.
+
+---
+
+## Keeping the docs in sync
+
+When a framework change alters user-visible workflow — new scripts,
+new phases, new bundle classes, behavior changes in CLAUDE.md — update
+both:
+
+- [`CHANGELOG.md`](CHANGELOG.md) for the *what changed and why*
+- [`WORKFLOW.md`](WORKFLOW.md) for the *what it feels like*
+
+The CHANGELOG is the system of record; WORKFLOW.md is the visualization
+the user (and future-you) refers to when picturing the work. Both
+should advance together.
+
+When a change is internal-only (refactoring scripts, doc cleanup,
+typo fixes), only the CHANGELOG needs updating.
