@@ -1,5 +1,100 @@
 # Changelog
 
+## v0.6.0 — 2026-05-06
+
+**Separate state from instructions; close the cross-session resume bug
+class.**
+
+**Background.** A real user reported three interlocking issues during
+their first project on the framework:
+1. Cross-session resume failed — new sessions greeted as fresh project
+   despite real state in CLAUDE.md.
+2. `install-bundle.sh` left CLAUDE.md in stale state (Done-When line
+   never marked installed; "Listed automatically" placeholder never
+   populated).
+3. Bundle's `claude-md-snippet.md` got appended verbatim, including
+   template-authoring meta-text and duplicate H2 sections that
+   conflict with existing CLAUDE.md sections.
+
+The deeper diagnosis: **CLAUDE.md was silently serving four roles**
+(static template, living state, bundle integration target,
+cross-session memory) without separation. Patching the symptoms would
+leave the bug class intact. v0.6 is the architectural fix.
+
+**Architecture change.**
+- **`STATE.md` (new file at project root)** — single source of truth
+  for living state. Holds Status, Current Phase, Your Role, Project,
+  End Users, Constraints, Tech Stack, Done-When checklist, Bundles
+  Installed, Repo State, Decision Log. Updated by Claude every turn
+  (per the Per-Turn Ritual). Read at session start by the SessionStart
+  hook.
+- **`CLAUDE.md` (rewritten)** — static framework instructions only.
+  Per-Turn Ritual, Session Start Verification, Methodology refs,
+  Bundle Selection guidance, How You Work. Versioned with the
+  framework; update only on framework version bumps.
+- **`.claude/hooks/session-start.sh` (new)** — reads STATE.md,
+  detects fresh-project marker (self-skips on fresh project), extracts
+  populated sections (skips placeholders), injects current state into
+  Claude's session context as `additionalContext`. Bypass-proof —
+  state appears at the system-context level.
+- **`.claude/settings.json`** — registers the SessionStart hook.
+
+**Defensive layer (closes Issues 2 + 3 + 1a).**
+- **`install-bundle.sh` updated** — after install, marks the Done-When
+  *"Bundle recommendation"* line as `[x]` with bundle name + date,
+  and adds a structured entry to STATE.md *"Bundles Installed"*
+  (replaces the placeholder on first install; idempotent on repeats).
+- **Renamed bundle snippet** — `claude-md-snippet.md` →
+  `claude-md-additions.md` for `design-frontend`. Old file contained
+  template-authoring meta-preamble (*"Paste these sections..."*) that
+  was getting appended verbatim. New file is ready-to-append static
+  design rules only. Install script supports both names for backward
+  compat with older bundles.
+- **`WORKFLOW.md` Session 0 dialogue** wrapped with explicit
+  *"Illustrative example only — not a template to follow literally"*
+  framing. Reduces Claude's pattern-matching of example dialogue as
+  state.
+- **Commit-cadence guidance** added to CLAUDE.md *How You Work* and
+  INIT.md. The SessionStart hook reads committed state, so unsaved
+  edits may be invisible to the next session in some Claude Code
+  configurations. Treat `git commit` as part of the per-phase ritual.
+- **`check-setup.sh` updated** — verifies STATE.md exists and the
+  SessionStart hook is installed + executable.
+
+**Migration for existing v0.5 projects.**
+1. Create `STATE.md` at project root from the v0.6 template.
+2. Move living-state content (Status, Your Role, Project, End Users,
+   Constraints, Tech Stack, Done-When, Repo State) from CLAUDE.md to
+   STATE.md.
+3. Replace CLAUDE.md with the v0.6 template (which references STATE.md).
+4. Copy `.claude/hooks/session-start.sh` and add the `SessionStart`
+   hook entry to `.claude/settings.json`.
+5. If bundle snippets were previously appended, clear the old append
+   block (between `<!-- begin: ... -->` markers) and re-run
+   `install-bundle.sh` to get the v0.6 cleaner additions.
+
+**Verification.** All three reported issues reproduced, fixed, and
+verified empirically:
+- Issue 1 hook: tested in sandbox; self-skips on fresh project
+  (exit 0, no output); injects populated sections + skip-placeholder
+  logic on populated STATE.md.
+- Issue 2 install state: `install-bundle.sh` now updates Done-When
+  line + Bundles Installed list; idempotent on re-run.
+- Issue 3 snippet: meta-preamble dropped; new
+  `claude-md-additions.md` is ready-to-append static rules only.
+
+**Known limitations.**
+- Hook depends on Claude Code firing `SessionStart` hooks (current
+  versions do). If a future Claude Code release changes hook timing,
+  this needs revisiting.
+- Resume relies on **committed** STATE.md — see commit-cadence
+  guidance in CLAUDE.md > How You Work.
+- Worktree behavior reported by the v0.5 user did not reproduce in our
+  testing environment, but the fixes work regardless of whether
+  worktrees are involved.
+
+---
+
 ## v0.5.0 — 2026-05-04
 
 **Workflow visualization shipped as a permanent doc.**

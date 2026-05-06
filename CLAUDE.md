@@ -1,25 +1,17 @@
 # CLAUDE.md — <project name>
 
-## Status
-**Fresh project. Phase: Discover (not yet started).**
-
-When this CLAUDE.md is read at the start of a session and the sections
-below are still empty or marked "to be filled," your job is to
-**facilitate** Phase 1 (Discover) with the user — not to assume answers.
-
-Begin the first session by greeting the user briefly and asking, in
-plain English:
-
-> *"What are we building, and what do you already know about it?"*
-
-After the user responds, invoke `superpowers:brainstorming` to formalize
-Phase 1 (Discover): problem framing, stakeholder map, feasibility check.
-As facts solidify in conversation, **update the sections below in
-place** — don't keep them empty once Discover yields answers.
+> **What this is.** Static framework instructions: rituals, methodology
+> references, bundle selection guidance, how-you-work rules. **Read
+> this for "how to operate"; read [`STATE.md`](STATE.md) for "where we
+> are."**
+>
+> **Project state lives in [STATE.md](STATE.md)**, not here. As
+> decisions land, update STATE.md in the same response (per the
+> Per-Turn Ritual). CLAUDE.md is the rules; STATE.md is the state.
 
 ---
 
-## Session Start Verification (run on first session of a new project)
+## Session Start Verification (first session of a new project only)
 
 Before greeting the user or starting Discover, verify the framework's
 prerequisites are in place. Run this once via the Bash tool:
@@ -29,7 +21,8 @@ prerequisites are in place. Run this once via the Bash tool:
 ```
 
 The script reports tools (`claude`, `gh`, `jq`), always-on plugins
-(`superpowers`, `context7-plugin`), and project scaffold state.
+(`superpowers`, `context7-plugin`), and project scaffold state
+(including `STATE.md`).
 
 - **If everything is OK** → continue to greeting and Phase 1 kickoff.
 - **If anything is missing** → tell the user what's missing, why each
@@ -38,9 +31,11 @@ The script reports tools (`claude`, `gh`, `jq`), always-on plugins
   the user to restart Claude Code (`/exit`, then `claude`) so plugins
   register, then resume Phase 1 in the next session.
 
-**Skip this check** on subsequent sessions (any session where Phase 1
-already has output — i.e. Project / End Users sections are no longer
-empty). The verification is one-time per project.
+**Skip this check** on subsequent sessions. The SessionStart hook
+(`.claude/hooks/session-start.sh`) injects current state from
+`STATE.md` into the session — if you see real project state in the
+injected context, the project is mid-flight; verification is already
+done.
 
 ---
 
@@ -50,75 +45,32 @@ Run through these three questions before each response. Non-negotiable —
 the framework's promise of "guide me throughout the project" depends on
 this loop running every turn, not just at the start of the project.
 
-1. **What phase of the 6 D's are we in?** Check *Current Phase* below.
-   If the user's request implies a phase transition (e.g. wants to start
-   coding while we're still in Define), pause and confirm before
-   proceeding. Don't drift.
+1. **What phase of the 6 D's are we in?** Check
+   [`STATE.md`](STATE.md) > *Current Phase*. If the user's request
+   implies a phase transition (e.g. wants to start coding while we're
+   still in Define), pause and confirm before proceeding. Don't drift.
 2. **Does a skill match this task?** Check
    [`.framework/CAPABILITY_MAP.md`](.framework/CAPABILITY_MAP.md). If
    the answer is "even 1% yes," invoke it via the Skill tool.
 3. **Does this complete a phase or change project state?** If yes,
-   update the relevant sections below (Current Phase, Done-When, Project,
-   Constraints, etc.) **in the same response** — don't defer.
-
----
-
-## Your Role
-*To be set during Phase 1 — propose a role to the user once project
-context is clear (e.g. "senior product engineer specialized in …").
-The role should reflect what kind of expert lens this project most
-needs.*
-
-## Project
-*To be filled during Phase 1 (Discover).*
-
-**One-line summary:** *…*
-
-**Deliverables in scope:**
-- *…*
-
-**Out of scope right now:** *…*
-
-## End Users
-*To be filled during Phase 2 (Define) — personas / JTBD emerge here.*
-
-## Constraints (non-negotiable)
-*To be filled during Phase 2 (Define).*
-
-Common constraint categories to consider:
-- Compliance (HIPAA, GDPR, SOC 2, etc.)
-- Accessibility (WCAG 2.2 AA, keyboard nav, screen readers)
-- Privacy / data handling
-- Performance / latency budgets
-- Cost / model selection (for AI projects)
-- Out-of-scope flags (what we are NOT building yet)
-
-## Tech Stack
-*To be filled during Phase 3 (Design) — chosen after architecture
-decisions land.*
+   update the relevant section in [`STATE.md`](STATE.md) (Current Phase,
+   Done-When, Project, End Users, Constraints, Tech Stack, Bundles
+   Installed, Repo State, Decision Log) **in the same response** —
+   don't defer.
 
 ---
 
 ## Methodology — 6 D's
 
-**Current Phase:** Discover (not started)
+This project follows the 6 D's: **Discover → Define → Design →
+Develop → Deliver → Evolve**. See
+[`.framework/METHODOLOGY.md`](.framework/METHODOLOGY.md) for the full
+description of each phase, with activities, outputs, and done-when
+criteria.
 
-This project follows the 6 D's: Discover → Define → Design → Develop →
-Deliver → Evolve. See [`.framework/METHODOLOGY.md`](.framework/METHODOLOGY.md)
-for the full description of each phase.
-
-### Done-When Checklist (Current Phase: Discover)
-
-Discover is complete when:
-- [ ] Problem statement (one paragraph)
-- [ ] Stakeholder map (who's involved, decides, is affected)
-- [ ] Tech feasibility check (libraries, models, costs are buildable)
-- [ ] Bundle recommendation (see *Bundle Selection* below)
-- [ ] User confirms readiness to move to Define
-
-When all are checked: update *Current Phase* above to "Define" and
-**replace this checklist** with Define's done-when criteria from
-[METHODOLOGY.md](.framework/METHODOLOGY.md).
+The current phase and the active Done-When checklist live in
+[`STATE.md`](STATE.md). Update STATE.md when a phase completes — don't
+edit this file.
 
 ---
 
@@ -147,9 +99,17 @@ Bad: *"I recommend installing the design-frontend bundle."* Good:
 ./.framework/scripts/install-bundle.sh <bundle-name>
 ```
 
-via the Bash tool. Then ask the user to restart Claude Code (`/exit`,
-then `claude`) so plugins register. Continue working with them after
-restart.
+via the Bash tool. The install script:
+- copies skills into `.claude-plugin/skills/`
+- merges marketplace plugins into `.claude/settings.json`
+- appends bundle's static design rules to this CLAUDE.md
+- **records install state in STATE.md** (Done-When marked, Bundles
+  Installed list updated)
+
+After install, ask the user to **commit and restart** Claude Code
+(`git add -A && git commit -m "Install <bundle> bundle"`, then `/exit`,
+then `claude`). The commit step is essential — see *How You Work*
+below for cadence guidance.
 
 If no available bundle fits the project, say so honestly. The project
 will rely on always-on (L1) skills, which is sufficient for many
@@ -158,35 +118,57 @@ domains.
 ---
 
 ## Tooling & Skills
+
 **Always-on (user scope):** superpowers, context7, claude-api,
 skill-creator, pdf/docx/xlsx/pptx, harness ops.
 
-**Project-scope bundles installed:**
-*Listed automatically when bundles are installed via*
-`./.framework/scripts/install-bundle.sh`*. Skill cheatsheet for each
-bundle lives at* `.framework/bundles/<name>/skills-cheatsheet.md`.
+**Project-scope bundles installed:** see
+[`STATE.md`](STATE.md) > *Bundles Installed*.
 
 See [`.framework/CAPABILITY_MAP.md`](.framework/CAPABILITY_MAP.md) for
 the skill-to-phase mapping.
 
+---
+
 ## How You Work
+
 1. **Run the Per-Turn Ritual** at the start of every response.
-2. Pull project context: this CLAUDE.md, any `system.md` /
-   `tokens.json` / `research/` artifacts that exist.
-3. Use the right skill for the current phase
+2. **Pull context.** Read this file (rules), [`STATE.md`](STATE.md)
+   (current state), and any project artifacts (`research/`,
+   `system.md`, `tokens.json`, code) relevant to the task.
+3. **Use the right skill for the current phase**
    ([CAPABILITY_MAP](.framework/CAPABILITY_MAP.md)).
-4. **Keep this document current.** As facts solidify, update the
-   sections above in the same response that produced the information.
-   Don't defer; staleness breaks future sessions' guidance.
-5. Confirm done-when criteria before transitioning phases.
-6. Verify before declaring done
+4. **Keep STATE.md current.** As facts solidify (decisions, persona
+   names, constraint commitments, phase transitions), update STATE.md
+   **in the same response** that produced the information. Don't
+   defer; staleness breaks future sessions' guidance.
+5. **Commit STATE.md before `/exit`.** Claude Code may spawn future
+   sessions with limited visibility into uncommitted working-tree
+   changes, depending on configuration. To guarantee cross-session
+   continuity:
+   - After updating STATE.md, encourage the user to commit:
+     `git add STATE.md && git commit -m "Phase 1: <decision>"`
+   - Major foundation changes (new hooks, settings.json edits,
+     bundle installs) should be committed before the user runs
+     `/exit`.
+   - The framework's SessionStart hook reads committed state, so
+     uncommitted updates may not be visible to the next session.
+6. Confirm done-when criteria before transitioning phases.
+7. Verify before declaring done
    (`superpowers:verification-before-completion`).
 
 **Confirm before creating canonical artifacts.** For new schemas,
 contracts, design system entries, or research synthesis docs, present
 the structure for approval before writing files.
 
-## Repo State
-- Working dir: *<auto-fill from `pwd`>*
-- Phase: Discover not yet started
-- Outstanding: everything; this is the first session
+---
+
+## Quick reference
+
+| Need to… | Read | Edit |
+|---|---|---|
+| Know the rules | This file | (read-only — framework instructions) |
+| Know where we are | [`STATE.md`](STATE.md) | [`STATE.md`](STATE.md) |
+| Know which skill applies | [`.framework/CAPABILITY_MAP.md`](.framework/CAPABILITY_MAP.md) | (read-only) |
+| Know what each phase requires | [`.framework/METHODOLOGY.md`](.framework/METHODOLOGY.md) | (read-only) |
+| Add a bundle | Bundle's `bundles/<name>/README.md` | Run `install-bundle.sh`, which edits STATE.md and CLAUDE.md |

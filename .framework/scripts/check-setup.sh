@@ -83,10 +83,28 @@ else
     red "CLAUDE.md missing — clone may be incomplete"
 fi
 
+if [[ -f STATE.md ]]; then
+    green "STATE.md present at project root (living state)"
+else
+    red "STATE.md missing — required by v0.6+ for cross-session resume"
+    printf "      see .framework/CHANGELOG.md for the v0.6 architecture change\n"
+fi
+
 if [[ -d .framework ]]; then
     green ".framework/ directory present"
 else
     red ".framework/ missing — clone may be incomplete"
+fi
+
+if [[ -f .claude/hooks/session-start.sh ]]; then
+    if [[ -x .claude/hooks/session-start.sh ]]; then
+        green "SessionStart hook installed and executable"
+    else
+        yellow "SessionStart hook present but not executable (run: chmod +x .claude/hooks/session-start.sh)"
+    fi
+else
+    yellow "SessionStart hook missing — cross-session resume may degrade"
+    printf "      expected: .claude/hooks/session-start.sh\n"
 fi
 
 echo

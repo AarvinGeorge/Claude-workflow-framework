@@ -35,6 +35,7 @@ they need, and whether the problem is worth solving.
 - **Bundle recommendation** — which framework bundle (if any) fits the
   project. Claude should propose this proactively based on project type;
   see CLAUDE.md's *Bundle Selection* section for the recommendation
+  workflow; install state is recorded automatically in STATE.md
   workflow.
 
 **Done when.** You can state in one sentence: *who* the user is, *what*
@@ -59,7 +60,7 @@ with clear success criteria.
 
 **Outputs.**
 - `research/personas.md`, `research/user-stories.md`
-- Constraints section in `CLAUDE.md`
+- Constraints + End Users sections filled in `STATE.md`
 - Eval suite (for AI projects) or test plan (for non-AI)
 
 **Done when.** Anyone reading the project charter can predict whether a

@@ -37,29 +37,38 @@ Claude doing the steering inside each session.
 
 ## Philosophy
 
-Three principles run through every design decision in this framework.
+Four principles run through every design decision in this framework.
 If something violates one, it gets reworked.
 
 ### 1. Discovery happens *with* Claude, not before it.
 Older versions of this framework asked the user to fill placeholders
 (end-users, constraints, tech stack) before starting work. That's
-backwards — those facts *emerge from* discovery. The CLAUDE.md is now
-a kickoff doc, not a form. Sections fill in during conversation.
+backwards — those facts *emerge from* discovery. STATE.md is a
+kickoff scaffold, not a form. Sections fill in during conversation.
 
 ### 2. Claude makes the informed decisions for you.
-You shouldn't need to know which bundle to install, which skill applies
-to which phase, or whether your machine has the right plugins. Claude
-checks setup on first session, recommends bundles after Discover,
-invokes the right skill per phase, and updates the project charter as
-facts solidify. You describe the project; Claude orchestrates the
-toolkit.
+You shouldn't need to know which bundle to install, which skill
+applies to which phase, or whether your machine has the right plugins.
+Claude checks setup on first session, recommends bundles after
+Discover, invokes the right skill per phase, and writes facts into
+STATE.md as they solidify. You describe the project; Claude
+orchestrates the toolkit.
 
 ### 3. The framework guides Claude *every turn*, not just at kickoff.
 A Per-Turn Ritual baked into CLAUDE.md asks Claude three questions
 before every response: what phase are we in, does a skill match this
-task, does this change project state. The framework's promise of
-"guide me throughout" is enforced by this loop — not by hope that
-Claude remembers.
+task, does this change project state. A SessionStart hook reads
+STATE.md at every new session start and re-anchors Claude to current
+state. The framework's promise of "guide me throughout" is enforced
+by these mechanisms — not by hope that Claude remembers.
+
+### 4. Rules and state live in separate files.
+**CLAUDE.md** holds the rules — static framework instructions, never
+edited mid-project. **STATE.md** holds the state — current phase,
+project facts, decisions, installed bundles, updated every turn.
+Install scripts and hooks edit only STATE.md; CLAUDE.md stays clean.
+This separation prevents the entire bug class where install tooling
+pollutes instructions or stale instructions get mistaken for state.
 
 ---
 
@@ -73,8 +82,10 @@ Concrete deliverables, all verifiable:
 | Capability map | [`.framework/CAPABILITY_MAP.md`](.framework/CAPABILITY_MAP.md) | Skill-to-phase mapping, including AI engineering twists |
 | Workflow visualization | [`.framework/WORKFLOW.md`](.framework/WORKFLOW.md) | Lifecycle diagram, dialogue snapshot, swim lanes, CLAUDE.md evolution |
 | Evolution loop | [`.framework/EVOLUTION.md`](.framework/EVOLUTION.md) | 4-question process for adding new skills/plugins/MCPs to your toolkit |
-| Project kickoff doc | [`CLAUDE.md`](CLAUDE.md) | Tells Claude how to start, run the per-turn ritual, recommend bundles, track phase |
-| Project scaffold | `.claude/`, `.claude-plugin/`, `.gitignore` | Ready-to-use Claude Code config |
+| Project rules / kickoff doc | [`CLAUDE.md`](CLAUDE.md) | **Static** — tells Claude how to start, run the per-turn ritual, recommend bundles, when to commit |
+| Living project state | [`STATE.md`](STATE.md) | **Dynamic** — current phase, project facts, constraints, bundles installed. Read at session start by the hook; updated by Claude every turn |
+| SessionStart hook | [`.claude/hooks/session-start.sh`](.claude/hooks/session-start.sh) | Reads STATE.md and injects current state into new sessions — ensures reliable cross-session resume |
+| Project scaffold | `.claude/`, `.claude-plugin/`, `.gitignore` | Ready-to-use Claude Code config (hook registered) |
 | Setup verification script | [`.framework/scripts/check-setup.sh`](.framework/scripts/check-setup.sh) | Runs on first session; reports missing tools and plugins |
 | Bundle install script | [`.framework/scripts/install-bundle.sh`](.framework/scripts/install-bundle.sh) | One command: copies skills, jq-merges settings, appends CLAUDE.md sections |
 | `design-frontend` bundle | [`.framework/bundles/design-frontend/`](.framework/bundles/design-frontend/) | Bundles `shadcn` + `emil-design-eng` skills directly; references `impeccable`, `interface-design`, `ui-ux-pro-max` marketplaces |
@@ -180,13 +191,14 @@ skill to invoke. You describe, you confirm, you build.
 
 | Stage | What Claude does | Backed by |
 |---|---|---|
-| First session | Verifies tools + plugins, offers to install what's missing | `check-setup.sh` + CLAUDE.md "Session Start Verification" |
+| Session start | Hook reads STATE.md → injects current state into context (or self-skips on fresh project) | `.claude/hooks/session-start.sh` |
+| First session only | Verifies tools + plugins, offers to install what's missing | `check-setup.sh` + CLAUDE.md "Session Start Verification" |
 | Phase 1 (Discover) | Auto-invokes brainstorming, walks problem framing, stakeholder map, feasibility, recommends bundle | CLAUDE.md kickoff + METHODOLOGY.md done-when |
 | Phase 2–6 | Invokes the right skill per phase, tracks done-when, transitions on completion | Per-Turn Ritual + CAPABILITY_MAP |
 | Every response | Runs 3-question ritual (phase, skill, state change) before answering | Per-Turn Ritual in CLAUDE.md |
-| Bundle install | Recommends + executes via Bash on user approval | CLAUDE.md "Bundle Selection" + install-bundle.sh |
-| Phase transitions | Updates `Current Phase`, swaps done-when checklist, in the same response | Per-Turn Ritual question 3 |
-| Project state | Keeps CLAUDE.md sections current as facts solidify | "How You Work" rule 4 |
+| Bundle install | Recommends + executes via Bash on user approval; records install in STATE.md | CLAUDE.md "Bundle Selection" + install-bundle.sh |
+| Phase transitions | Updates `Current Phase`, swaps done-when checklist in STATE.md, in the same response | Per-Turn Ritual question 3 |
+| Project state | Keeps STATE.md sections current as facts solidify; reminds you to commit | "How You Work" rules 4 + 5 |
 
 ---
 
@@ -197,10 +209,14 @@ Honest list of limits:
 - **Doesn't run on Windows without WSL.** Scripts are bash-only.
 - **Doesn't auto-restart Claude Code after plugin install.** That's a
   Claude Code limitation; you `/exit` and re-run `claude` manually.
+- **Doesn't auto-commit STATE.md.** Cross-session resume depends on
+  committed state. Claude reminds you to commit after major updates,
+  but the actual `git commit` is a user action. (See *How You Work* in
+  CLAUDE.md.)
 - **Doesn't enforce the Per-Turn Ritual.** Claude has to honor the
   guidance. Long contexts can drift; opening a fresh session re-reads
-  CLAUDE.md and re-anchors. If you notice ritual skipping, prompting
-  *"run the per-turn ritual"* is the fix.
+  CLAUDE.md + STATE.md (via the hook) and re-anchors. If you notice
+  ritual skipping, prompting *"run the per-turn ritual"* is the fix.
 - **Doesn't (yet) cover every domain.** Currently one bundle:
   `design-frontend`. AI engineering, backend, data, mobile, extension —
   to be authored as projects need them. The framework explicitly
@@ -229,7 +245,8 @@ Versions visible:
 - **v0.2** — restructure for zero-prep bootstrap
 - **v0.3** — Per-Turn Ritual + Bundle Selection (continuous guidance)
 - **v0.4** — setup verification (`check-setup.sh`)
-- **v0.5** — workflow visualization in `WORKFLOW.md` (this version)
+- **v0.5** — workflow visualization in `WORKFLOW.md`
+- **v0.6** — separate state from instructions (STATE.md + SessionStart hook); install-bundle records state; cleaner bundle additions (this version)
 
 ---
 
@@ -238,8 +255,12 @@ Versions visible:
 ```
 Claude-workflow-framework/         ← repo root = project root after cloning
 ├── README.md                      ← this file (replaced by user during their project)
-├── CLAUDE.md                      ← project kickoff doc (the active brain of the framework)
-├── .claude/settings.json          ← baseline Claude Code config
+├── CLAUDE.md                      ← STATIC framework rules (rituals, methodology refs, how-you-work)
+├── STATE.md                       ← LIVING project state (phase, project, constraints, bundles)
+├── .claude/
+│   ├── settings.json              ← baseline Claude Code config (SessionStart hook registered)
+│   └── hooks/
+│       └── session-start.sh       ← reads STATE.md and injects current state at session start
 ├── .claude-plugin/                ← local plugin shell, populated by bundles
 │   ├── plugin.json
 │   ├── marketplace.json
@@ -249,19 +270,19 @@ Claude-workflow-framework/         ← repo root = project root after cloning
     ├── README.md                  ← docs index
     ├── METHODOLOGY.md             ← the 6 D's, fully described
     ├── CAPABILITY_MAP.md          ← skill ↔ phase mapping
-    ├── WORKFLOW.md                ← visual workflow (lifecycle, dialogue, swim lanes)
+    ├── WORKFLOW.md                ← visual workflow (lifecycle, dialogue, swim lanes, STATE.md evolution)
     ├── EVOLUTION.md               ← 4-question loop for new skills
     ├── INIT.md                    ← starter checklist
     ├── CHANGELOG.md               ← framework version history
     ├── LICENSE                    ← MIT
     ├── scripts/
-    │   ├── check-setup.sh         ← verifies tools + plugins on first session
-    │   └── install-bundle.sh      ← one-command bundle install
+    │   ├── check-setup.sh         ← verifies tools + plugins + STATE.md on first session
+    │   └── install-bundle.sh      ← one-command bundle install (also records install in STATE.md)
     └── bundles/
         ├── BUNDLE_GUIDE.md        ← which bundle when, how to author new ones
-        └── design-frontend/       ← v0.4's only bundle
+        └── design-frontend/       ← v0.6's only bundle
             ├── README.md
-            ├── claude-md-snippet.md
+            ├── claude-md-additions.md   ← static design rules, ready-to-append (v0.6+ name)
             ├── settings-additions.json
             ├── skills-cheatsheet.md
             └── skills/            ← shadcn, emil-design-eng (full content)

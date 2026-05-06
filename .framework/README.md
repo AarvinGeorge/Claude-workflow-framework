@@ -15,14 +15,16 @@ For the framework's full explanation, see the
 |---|---|
 | [`METHODOLOGY.md`](METHODOLOGY.md) | The 6 D's methodology — phases, activities, outputs, done-when criteria |
 | [`CAPABILITY_MAP.md`](CAPABILITY_MAP.md) | Skill-to-phase mapping. Living doc; update when toolkit changes |
-| [`WORKFLOW.md`](WORKFLOW.md) | Visual workflow — lifecycle diagram, dialogue snapshot, swim lanes, CLAUDE.md evolution. Update when user-visible workflow changes |
+| [`WORKFLOW.md`](WORKFLOW.md) | Visual workflow — lifecycle diagram, dialogue snapshot, swim lanes, STATE.md evolution. Update when user-visible workflow changes |
 | [`EVOLUTION.md`](EVOLUTION.md) | 4-question loop for adding new skills/plugins/MCPs |
 | [`INIT.md`](INIT.md) | Starter checklist for new projects (most of this is automated; INIT.md is the backup reference) |
 | [`CHANGELOG.md`](CHANGELOG.md) | Framework version history |
 | [`LICENSE`](LICENSE) | MIT |
-| [`scripts/check-setup.sh`](scripts/check-setup.sh) | Verifies tools + plugins on first session |
-| [`scripts/install-bundle.sh`](scripts/install-bundle.sh) | One-command bundle install (cp + jq merge + CLAUDE.md append) |
+| [`scripts/check-setup.sh`](scripts/check-setup.sh) | Verifies tools + plugins + STATE.md + SessionStart hook on first session |
+| [`scripts/install-bundle.sh`](scripts/install-bundle.sh) | One-command bundle install (skills, settings, CLAUDE.md additions, STATE.md install record) |
 | [`bundles/`](bundles/) | Domain add-ons. See [`bundles/BUNDLE_GUIDE.md`](bundles/BUNDLE_GUIDE.md) |
+| (root `STATE.md`) | Living project state — read by SessionStart hook for cross-session resume; updated by Claude every turn |
+| (root `.claude/hooks/session-start.sh`) | SessionStart hook — reads STATE.md, injects current state into new sessions |
 
 ---
 

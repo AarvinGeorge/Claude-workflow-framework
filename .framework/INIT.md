@@ -64,23 +64,35 @@ No restructure step. No file rename. No placeholder-filling.
 claude
 ```
 
-Claude reads `CLAUDE.md`, sees "Phase: Discover (not started)," and:
+Claude reads `CLAUDE.md` (rules), `STATE.md` (state — sees the
+fresh-project marker), and:
 
-1. Greets you briefly
-2. Asks: *"What are we building, and what do you already know about it?"*
-3. Invokes `superpowers:brainstorming` once you describe the project
-4. Walks Phase 1 (Discover): problem framing, stakeholder map,
+1. Runs `check-setup.sh` to verify tools + plugins are in place
+2. Greets you briefly
+3. Asks: *"What are we building, and what do you already know about it?"*
+4. Invokes `superpowers:brainstorming` once you describe the project
+5. Walks Phase 1 (Discover): problem framing, stakeholder map,
    feasibility check
-5. **Proactively recommends a bundle** based on project type ("sounds
+6. **Proactively recommends a bundle** based on project type ("sounds
    like there's significant UI work — I can install some
    design-engineering capabilities, OK?")
-6. On approval, runs the install script itself via Bash, then asks you
-   to restart Claude Code so plugins register
-7. Continues guiding you through Define → Design → Develop → Deliver →
+7. On approval, runs the install script itself via Bash, **asks you to
+   commit** the changes, then asks you to restart Claude Code so
+   plugins register
+8. Continues guiding you through Define → Design → Develop → Deliver →
    Evolve, invoking the right skill for each phase
 
-**Sections of CLAUDE.md fill in *during* the conversation**, not before.
-Roles, constraints, tech stack — all emerge from discovery.
+**Sections of STATE.md fill in *during* the conversation**, not before.
+Role, project summary, end-users, constraints, tech stack — all emerge
+from discovery and are written into STATE.md as decisions land.
+
+> **Commit before `/exit`.** Claude Code may spawn future sessions
+> with limited visibility into uncommitted working-tree changes,
+> depending on configuration. The SessionStart hook reads *committed*
+> STATE.md, so unsaved edits may be invisible to the next session.
+> Treat `git commit` as part of the per-phase ritual: when STATE.md
+> updates land, commit them. The commit cadence guidance lives in
+> [`CLAUDE.md`](../CLAUDE.md) > *How You Work*.
 
 ---
 
